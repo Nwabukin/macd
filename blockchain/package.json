@@ -1,0 +1,45 @@
+{
+  "name": "rsu-evoting-blockchain",
+  "version": "1.0.0",
+  "description": "Blockchain infrastructure for RSU E-Voting System",
+  "main": "hardhat.config.js",
+  "scripts": {
+    "compile": "hardhat compile",
+    "test": "hardhat test",
+    "test:gas": "REPORT_GAS=true hardhat test",
+    "test:coverage": "hardhat coverage",
+    "node": "hardhat node",
+    "deploy": "hardhat run scripts/deploy.js",
+    "deploy-local": "hardhat run scripts/deploy.js --network localhost",
+    "deploy-docker": "hardhat run scripts/deploy.js --network docker",
+    "setup-election": "hardhat run scripts/setup-election.js --network localhost",
+    "setup-election-docker": "hardhat run scripts/setup-election.js --network docker",
+    "test-vote": "hardhat run scripts/test-vote.js --network localhost",
+    "test-vote-docker": "hardhat run scripts/test-vote.js --network docker",
+    "verify-contract": "hardhat run scripts/verify-contract.js --network localhost",
+    "verify-contract-docker": "hardhat run scripts/verify-contract.js --network docker",
+    "clean": "hardhat clean",
+    "size": "hardhat size-contracts",
+    "console": "hardhat console"
+  },
+  "dependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^4.0.0",
+    "dotenv": "^16.6.1",
+    "ethers": "^6.10.0",
+    "hardhat": "^2.19.0"
+  },
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.0",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.0",
+    "chai": "^4.3.0"
+  },
+  "keywords": [
+    "blockchain",
+    "ethereum",
+    "solidity",
+    "hardhat",
+    "voting"
+  ],
+  "author": "RSU Computer Science Department",
+  "license": "MIT"
+}

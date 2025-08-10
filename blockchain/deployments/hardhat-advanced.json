@@ -1,0 +1,57 @@
+{
+  "network": "hardhat",
+  "chainId": 1337,
+  "deployerAddress": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "timestamp": "2025-08-09T03:35:13.420Z",
+  "contracts": {
+    "AdvancedVotingContract": {
+      "address": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+      "deploymentHash": "0x8e4a58262214be7c1ae9a6f53a79030c07dceabbeee398ff1bce7eb9a595aff1",
+      "blockNumber": 1,
+      "gasUsed": "2780694"
+    },
+    "MultiSigVotingContract": {
+      "address": "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      "deploymentHash": "0x6ea7deffc6c7f89fa30a330b66f4467c1770ca4b161f4e9bc23c6ea12a54acea",
+      "blockNumber": 2,
+      "gasUsed": "2405304",
+      "initialAdmins": [
+        "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+        "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+        "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC"
+      ],
+      "requiredConfirmations": 2
+    },
+    "SimpleVotingFactory": {
+      "address": "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      "deploymentHash": "0xb2245fbae1d75aba46ba6d139649a0106ea55906443652e82ee81a299adcd573",
+      "blockNumber": 3,
+      "gasUsed": "3573941",
+      "deploymentFee": "10000000000000000"
+    }
+  },
+  "sampleData": {
+    "positions": [
+      {
+        "id": "1",
+        "title": "President",
+        "description": "Student Union President"
+      },
+      {
+        "id": "2",
+        "title": "Vice President",
+        "description": "Student Union Vice President"
+      },
+      {
+        "id": "3",
+        "title": "Secretary",
+        "description": "Student Union Secretary"
+      },
+      {
+        "id": "4",
+        "title": "Treasurer",
+        "description": "Student Union Treasurer"
+      }
+    ]
+  }
+}

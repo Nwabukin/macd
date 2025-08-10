@@ -1,0 +1,94 @@
+services:
+  # MySQL Database Service
+  db:
+    image: mysql:8.0
+    container_name: rsu_evoting_db
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword123
+      MYSQL_DATABASE: rsu_evoting
+      MYSQL_USER: evoting_user
+      MYSQL_PASSWORD: evoting_pass123
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./database/init:/docker-entrypoint-initdb.d
+      - ./database/data:/var/lib/mysql
+    networks:
+      - evoting-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  # Hardhat Blockchain Service
+  hardhat:
+    build:
+      context: ./blockchain
+      dockerfile: Dockerfile
+    container_name: rsu_evoting_blockchain
+    restart: unless-stopped
+    ports:
+      - "8545:8545"
+    volumes:
+      - ./blockchain:/app
+      - /app/node_modules
+    networks:
+      - evoting-network
+    command: npx hardhat node --hostname 0.0.0.0
+
+  # Node.js Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: rsu_evoting_backend
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_PORT=3306
+      - DB_NAME=rsu_evoting
+      - DB_USER=evoting_user
+      - DB_PASSWORD=evoting_pass123
+      - BLOCKCHAIN_URL=http://hardhat:8545
+      - JWT_SECRET=your_super_secret_jwt_key_here_change_in_production
+    networks:
+      - evoting-network
+    depends_on:
+      - db
+      - hardhat
+    command: npm run dev
+
+  # React Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: rsu_evoting_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - REACT_APP_BACKEND_URL=http://localhost:5000
+      - REACT_APP_BLOCKCHAIN_URL=http://localhost:8545
+    networks:
+      - evoting-network
+    depends_on:
+      - backend
+    command: npm start
+
+networks:
+  evoting-network:
+    driver: bridge
+
+volumes:
+  mysql_data:

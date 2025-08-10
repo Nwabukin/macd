@@ -1,0 +1,199 @@
+---
+alwaysApply: true
+---
+# Cursor Rules - Functional Code First
+
+## Core Principle
+**FUNCTIONAL CODE FIRST**: Prioritize working, tested code over perfect documentation, elaborate comments, or lengthy discussions. Get it working, then improve.
+
+## Code Writing Standards
+
+### 1. Functionality Priority
+- Write working code immediately, optimize later
+- Prefer simple, readable solutions over complex abstractions
+- Test functionality as you build, not after everything is written
+- Fix bugs immediately when discovered
+- Implement features incrementally and test each increment
+
+### 2. Commenting Philosophy
+- **NO comments for obvious code** - `user.name = "John"` doesn't need explanation
+- **Comment WHY, not WHAT** - explain business logic, not syntax
+- **Comment complex algorithms** - if it took you time to figure out, comment it
+- **Comment edge cases and workarounds** - future you will thank present you
+- **Use TODO comments sparingly** - prefer immediate action or proper task tracking
+
+```javascript
+// Good: Explains business logic
+// Apply 15% discount for premium users during checkout
+const discount = user.isPremium ? price * 0.15 : 0;
+
+// Bad: States the obvious
+// Set discount to 15% of price if user is premium, otherwise 0
+const discount = user.isPremium ? price * 0.15 : 0;
+```
+
+### 3. Code Organization
+- **Small, focused functions** - if it doesn't fit on screen, break it down
+- **Meaningful variable/function names** - `getUserById()` not `getData()`
+- **Consistent naming conventions** - pick camelCase or snake_case, stick to it
+- **Group related functionality** - imports at top, helpers at bottom
+- **Extract constants** - magic numbers become named constants
+
+### 4. Error Handling
+- **Handle errors where they occur** - don't pass them up endlessly
+- **Fail fast and loud** - better to crash than corrupt data
+- **Log meaningful error messages** - include context, not just error text
+- **Use appropriate error types** - validation errors vs system errors
+
+## Git Commit Standards
+
+### Commit Message Format
+```
+<type>: <description>
+
+[optional body explaining WHY, not what]
+```
+
+### Commit Types (keep it simple)
+- `feat`: new feature that works
+- `fix`: bug fix that works
+- `refactor`: code improvement that doesn't break anything
+- `docs`: documentation only
+- `chore`: maintenance tasks
+
+### Commit Rules
+- **Commit working code frequently** - small, functional chunks
+- **Each commit should build/run** - don't commit broken code
+- **Descriptive but concise** - "fix user login validation" not "fixed stuff"
+- **Commit related changes together** - don't mix features with bug fixes
+
+```bash
+# Good commits
+feat: add user authentication with JWT tokens
+fix: resolve null pointer in payment processing
+refactor: extract database connection logic
+
+# Bad commits
+update
+fixed bug
+changes
+WIP
+```
+
+## Development Workflow
+
+### 1. Feature Development
+1. **Understand the requirement** (5 minutes max discussion)
+2. **Write minimal working version** 
+3. **Test it manually**
+4. **Commit working version**
+5. **Iterate and improve**
+6. **Add error handling**
+7. **Final commit**
+
+### 2. Bug Fixing
+1. **Reproduce the bug**
+2. **Write failing test if possible**
+3. **Fix with minimal change**
+4. **Verify fix works**
+5. **Commit immediately**
+
+### 3. Code Review Focus
+- **Does it work?** (most important)
+- **Is it readable?** (second most important)
+- **Are there obvious bugs?**
+- **Does it follow project patterns?**
+- Skip nitpicking about style if code works
+
+## File Organization
+
+### Project Structure
+```
+src/
+  components/     # Reusable UI components
+  pages/         # Route/page components  
+  utils/         # Helper functions
+  services/      # API calls, external services
+  hooks/         # Custom React hooks (if applicable)
+  types/         # Type definitions (if TypeScript)
+tests/
+  unit/          # Unit tests
+  integration/   # Integration tests
+docs/            # Only if specifically needed
+```
+
+### File Naming
+- Use consistent casing: `UserProfile.jsx` or `user-profile.jsx`
+- Make names descriptive: `authService.js` not `auth.js`
+- Group related files: `user.model.js`, `user.service.js`, `user.controller.js`
+
+## Testing Strategy
+
+### Testing Priority
+1. **Critical path testing** - core features that break the app
+2. **Integration tests** - how components work together
+3. **Unit tests** - complex business logic only
+4. **Manual testing** - quick smoke tests as you develop
+
+### Testing Rules
+- **Test behavior, not implementation**
+- **Write tests for bugs you fix**
+- **Don't test obvious code** - getters/setters don't need tests
+- **Mock external dependencies**
+- **Keep tests simple and fast**
+
+## Performance Guidelines
+
+### Write Performance-Conscious Code
+- **Avoid premature optimization** - get it working first
+- **Profile before optimizing** - measure, don't guess
+- **Cache expensive operations** - API calls, complex calculations
+- **Lazy load when possible** - images, routes, data
+- **Use appropriate data structures** - arrays vs objects vs maps
+
+## Code Quality Tools
+
+### Recommended Setup
+- **Linter**: ESLint with practical rules (not overly strict)
+- **Formatter**: Prettier with team-agreed settings
+- **Type checking**: TypeScript for large projects, JSDoc for smaller ones
+- **Git hooks**: Pre-commit hooks for linting and tests
+
+### Tool Configuration Priority
+1. **Functionality** - does the code work?
+2. **Consistency** - does it follow project patterns?
+3. **Readability** - can others understand it?
+4. **Style** - formatting and aesthetics (lowest priority)
+
+## When to Break These Rules
+
+### Break rules when:
+- **Emergency bug fixes** - get it working, clean up later
+- **Proof of concepts** - exploring solutions quickly
+- **External constraints** - client/team requirements override
+- **Performance critical code** - optimization may require complexity
+
+### Never break these rules:
+- **Don't commit broken code** to main branch
+- **Don't ignore obvious security issues**
+- **Don't skip error handling in production code**
+- **Don't leave debugging code in commits**
+
+## Communication Guidelines
+
+### Code Reviews
+- **Focus on functionality first**
+- **Be specific in feedback** - "this could cause a memory leak" not "looks wrong"
+- **Suggest solutions** - don't just point out problems
+- **Approve working code** - don't block for style preferences
+
+### Documentation
+- **README with setup instructions** - how to run the project
+- **API documentation** - if building APIs
+- **Architecture decisions** - only for complex/unusual choices
+- **Avoid over-documentation** - code should be self-explanatory
+
+## Summary
+
+**Remember: Working code that solves the problem is better than perfect code that doesn't exist. Build first, polish second.**
+ 
