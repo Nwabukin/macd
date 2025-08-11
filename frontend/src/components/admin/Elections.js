@@ -16,7 +16,21 @@ const AdminElections = () => {
     } catch (e) { setError('Failed to load elections'); }
   };
 
-  useEffect(()=>{ load(); },[]);
+  useEffect(()=>{ 
+    load();
+    // Prefill start/end with chain time + sensible defaults
+    (async()=>{
+      try{
+        const { data } = await api.get('/admin/blockchain/now');
+        const nowSec = Number(data.chainNow || Math.floor(Date.now()/1000));
+        const start = new Date((nowSec + 120) * 1000); // +2 minutes
+        const end = new Date((nowSec + 120 + 3600) * 1000); // +1h
+        const pad = (n)=> String(n).padStart(2,'0');
+        const toLocalInput=(d)=> `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        setForm((f)=>({ ...f, start: toLocalInput(start), end: toLocalInput(end) }));
+      }catch(_){/* ignore */}
+    })();
+  },[]);
 
   const createElection = async () => {
     setCreating(true); setError('');

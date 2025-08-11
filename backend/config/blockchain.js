@@ -73,7 +73,7 @@ async function loadContracts() {
     const abiPath = fs.existsSync(mountedPath) ? mountedPath : localPath;
     
     // Load VotingContract ABI
-    if (fs.existsSync(path.join(__dirname, abiPath, 'VotingContract-abi.json'))) {
+    if (fs.existsSync(path.join(abiPath, 'VotingContract-abi.json'))) {
       const votingABI = JSON.parse(
         fs.readFileSync(path.join(abiPath, 'VotingContract-abi.json'), 'utf8')
       );
@@ -86,7 +86,7 @@ async function loadContracts() {
     }
     
     // Load AdvancedVotingContract ABI
-    if (fs.existsSync(path.join(__dirname, abiPath, 'AdvancedVotingContract-abi.json'))) {
+    if (fs.existsSync(path.join(abiPath, 'AdvancedVotingContract-abi.json'))) {
       const advancedABI = JSON.parse(
         fs.readFileSync(path.join(abiPath, 'AdvancedVotingContract-abi.json'), 'utf8')
       );
@@ -99,7 +99,7 @@ async function loadContracts() {
     }
     
     // Load MultiSigVotingContract ABI
-    if (fs.existsSync(path.join(__dirname, abiPath, 'MultiSigVotingContract-abi.json'))) {
+    if (fs.existsSync(path.join(abiPath, 'MultiSigVotingContract-abi.json'))) {
       const multiSigABI = JSON.parse(
         fs.readFileSync(path.join(abiPath, 'MultiSigVotingContract-abi.json'), 'utf8')
       );
@@ -112,7 +112,7 @@ async function loadContracts() {
     }
     
     // Load SimpleVotingFactory ABI
-    if (fs.existsSync(path.join(__dirname, abiPath, 'SimpleVotingFactory-abi.json'))) {
+    if (fs.existsSync(path.join(abiPath, 'SimpleVotingFactory-abi.json'))) {
       const factoryABI = JSON.parse(
         fs.readFileSync(path.join(abiPath, 'SimpleVotingFactory-abi.json'), 'utf8')
       );
@@ -362,7 +362,8 @@ module.exports = {
   listenForEvents,
   healthCheck,
   provider,
-  signer,
+  getProvider: () => provider,
+  getSigner: () => signer,
   contracts,
   contractAddresses
 };

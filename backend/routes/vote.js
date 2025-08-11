@@ -18,15 +18,9 @@ router.post(
     try {
       const { electionId, positionId, candidateId, privateKey } = req.body;
 
-      // Optional: check election is active
+      // Validate election exists; rely on contract for time-window enforcement
       const infoRes = await callContract('AdvancedVotingContract', 'getElectionInfo', [Number(electionId)]);
       if (!infoRes.success) return res.status(400).json({ success: false, message: 'Invalid election' });
-      const [_, __, startTime, endTime, ___, isActive] = infoRes.data;
-      const now = Math.floor(Date.now() / 1000);
-      const start = Number(startTime), end = Number(endTime);
-      if (!isActive || now < start || now > end) {
-        return res.status(400).json({ success: false, message: 'Election is not active' });
-      }
 
       const txRes = await executeWithPrivateKey(
         'AdvancedVotingContract',

@@ -39,14 +39,19 @@ The project uses a three-tier architecture, fully containerized with Docker:
 
 3. **Start the application**
    ```bash
-   docker-compose up --build
+   docker-compose up --build -d
    ```
 
 4. **Access the application**
    - Frontend: http://localhost:3000
    - Backend API: http://localhost:5000
-   - Database: localhost:3306
    - Blockchain: http://localhost:8545
+
+5. **Deploy contracts to docker Hardhat network and restart backend**
+   ```bash
+   docker exec rsu_evoting_blockchain sh -lc "npx hardhat run scripts/deploy-advanced.js --network docker | cat"
+   docker-compose restart backend
+   ```
 
 ## 📁 Project Structure
 
@@ -110,10 +115,15 @@ docker exec -it rsu_evoting_db mysql -u evoting_user -p rsu_evoting
 ### Smart Contract Deployment
 
 ```bash
-# Deploy contracts to local network
-cd blockchain
-npm run deploy-local
+# Deploy contracts to docker network (preferred)
+docker exec rsu_evoting_blockchain sh -lc "npx hardhat run scripts/deploy-advanced.js --network docker | cat"
+# Then restart backend so it reloads ABIs and addresses
+docker-compose restart backend
 ```
+
+### Test Credentials
+- Admin: email `admin@rsu.edu.ng`, password `admin123`
+- Voter (after setup): use matric number (e.g., `DE.2021/4311`) and the password you set during first-time setup. The private key will be shown once and is required to cast a vote.
 
 ## 🔐 Security Features
 

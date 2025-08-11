@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate, requireAdmin } = require('../middleware/auth');
-const { executeTransaction, callContract } = require('../config/blockchain');
+const { executeTransaction, callContract, getProvider } = require('../config/blockchain');
 const { body } = require('express-validator');
 const { handleValidationErrors } = require('../middleware/validation');
 
@@ -110,16 +110,29 @@ router.post(
   async (req, res) => {
     try {
       const { title, description, startTime, endTime, electionType, positionIds } = req.body;
+
+      // Normalize times against chain time to avoid 'Start time must be in the future' reverts
+      const provider = typeof getProvider === 'function' ? getProvider() : null;
+      const latestBlock = provider ? await provider.getBlock('latest') : null;
+      const chainNow = latestBlock && latestBlock.timestamp ? Number(latestBlock.timestamp) : Math.floor(Date.now() / 1000);
+
+      const MIN_LEAD_SECONDS = 60; // ensure at least 1 minute lead on chain clock
+      let s = Number(startTime);
+      let e = Number(endTime);
+      if (Number.isNaN(s)) s = chainNow + MIN_LEAD_SECONDS;
+      if (s <= chainNow + 30) s = chainNow + MIN_LEAD_SECONDS;
+      if (Number.isNaN(e) || e <= s) e = s + 3600; // default 1h duration
+
       const tx = await executeTransaction('AdvancedVotingContract', 'createElection', [
         title,
         description,
-        Number(startTime),
-        Number(endTime),
+        s,
+        e,
         Number(electionType),
         positionIds.map((p) => Number(p)),
       ]);
       if (!tx.success) return res.status(400).json({ success: false, message: tx.error || 'Transaction failed' });
-      res.json({ success: true, tx });
+      res.json({ success: true, tx, normalized: { startTime: s, endTime: e, chainNow } });
     } catch (error) {
       console.error('Create election error:', error);
       res.status(500).json({ success: false, message: 'Internal server error' });

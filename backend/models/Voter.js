@@ -552,10 +552,10 @@ class Voter {
         LEFT JOIN academic_levels al ON v.level_id = al.id
         WHERE v.first_name LIKE ? OR v.last_name LIKE ? OR v.matric_number LIKE ? OR v.email LIKE ?
         ORDER BY v.created_at DESC
-        LIMIT ? OFFSET ?
+        LIMIT ${Number(limit)} OFFSET ${Number(offset)}
       `;
       
-      const result = await executeQuery(query, [searchPattern, searchPattern, searchPattern, searchPattern, limit, offset]);
+      const result = await executeQuery(query, [searchPattern, searchPattern, searchPattern, searchPattern]);
       
       if (result.success) {
         return {

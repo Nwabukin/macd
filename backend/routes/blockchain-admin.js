@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const { authenticate, requireAdmin } = require('../middleware/auth');
-const { executeTransaction, callContract } = require('../config/blockchain');
+const { executeTransaction, callContract, getSigner, getProvider } = require('../config/blockchain');
+const { ethers } = require('ethers');
 const { body } = require('express-validator');
 const { handleValidationErrors } = require('../middleware/validation');
 
@@ -28,6 +29,17 @@ router.post(
     }
   }
 );
+
+// GET /api/admin/blockchain/now - returns chain timestamp (seconds)
+router.get('/now', async (req, res) => {
+  try {
+    const provider = getProvider();
+    const block = await provider.getBlock('latest');
+    res.json({ success: true, chainNow: Number(block?.timestamp || Math.floor(Date.now()/1000)) });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
 
 // POST /api/admin/blockchain/bootstrap-election { title }
 router.post('/bootstrap-election', async (req, res) => {
@@ -77,4 +89,42 @@ router.post('/bootstrap-election', async (req, res) => {
 
 module.exports = router;
 
+
+// Admin time travel (Hardhat only): { seconds }
+router.post('/time-increase', async (req, res) => {
+  try {
+    const seconds = Number(req.body?.seconds || 0);
+    if (!seconds || seconds <= 0) return res.status(400).json({ success: false, message: 'seconds > 0 required' });
+    const provider = getProvider();
+    await provider.send('evm_increaseTime', [seconds]);
+    await provider.send('evm_mine', []);
+    res.json({ success: true, advanced: seconds });
+  } catch (error) {
+    res.status(400).json({ success: false, message: error.message });
+  }
+});
+
+// POST /api/admin/blockchain/faucet { address, amountEther }
+router.post(
+  '/faucet',
+  [
+    body('address').matches(/^0x[a-fA-F0-9]{40}$/).withMessage('Valid address required'),
+    body('amountEther').optional().isString(),
+    handleValidationErrors,
+  ],
+  async (req, res) => {
+    try {
+      const { address, amountEther } = req.body;
+      const amount = amountEther ? ethers.parseEther(amountEther) : ethers.parseEther('1.0');
+      const signer = getSigner();
+      if (!signer) throw new Error('Signer not initialized');
+      const tx = await signer.sendTransaction({ to: address, value: amount });
+      const receipt = await tx.wait();
+      res.json({ success: true, tx: { hash: receipt.transactionHash, blockNumber: receipt.blockNumber } });
+    } catch (error) {
+      console.error('faucet error:', error);
+      res.status(400).json({ success: false, message: error.message });
+    }
+  }
+);
 
