@@ -309,17 +309,19 @@ class Voter {
       const total = countResult.data[0].total;
       
       // Get voters
+      const safeSortBy = ['created_at','updated_at','first_name','last_name','email','matric_number'].includes(sortBy) ? sortBy : 'created_at';
+      const safeSortOrder = sortOrder && sortOrder.toLowerCase() === 'asc' ? 'ASC' : 'DESC';
       const query = `
         SELECT v.*, d.name as department_name, al.level_name
         FROM voters v
         LEFT JOIN departments d ON v.department_id = d.id
         LEFT JOIN academic_levels al ON v.level_id = al.id
         WHERE ${whereClause}
-        ORDER BY v.${sortBy} ${sortOrder}
-        LIMIT ? OFFSET ?
+        ORDER BY v.${safeSortBy} ${safeSortOrder}
+        LIMIT ${Number(limit)} OFFSET ${Number(offset)}
       `;
       
-      const result = await executeQuery(query, [...whereParams, limit, offset]);
+      const result = await executeQuery(query, whereParams);
       
       if (result.success) {
         return {

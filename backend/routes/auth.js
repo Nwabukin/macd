@@ -105,8 +105,8 @@ router.post('/voter/login', loginRateLimit, validateVoterLogin, async (req, res)
     
     const voter = result.voter;
     
-    // Check if voter is authorized
-    if (!voter.isAuthorized) {
+    // Check if voter is authorized (only block if explicitly unauthorized)
+    if (Object.prototype.hasOwnProperty.call(voter, 'isAuthorized') && voter.isAuthorized === 0) {
       await logAuthEvent('voter', voter.id, 'login_unauthorized', req.ip, req.get('User-Agent'));
       return res.status(403).json({
         success: false,

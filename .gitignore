@@ -64,8 +64,6 @@ blockchain/typechain-types/
 
 # Uploads
 uploads/
-backend/uploads/
-frontend/uploads/
 
 # Docker
 .dockerignore

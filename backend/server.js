@@ -12,6 +12,10 @@ const { initBlockchain } = require('./config/blockchain');
 // Import routes
 const authRoutes = require('./routes/auth');
 const adminRoutes = require('./routes/admin');
+const electionsRoutes = require('./routes/elections');
+const voteRoutes = require('./routes/vote');
+const blockchainAdminRoutes = require('./routes/blockchain-admin');
+const adminElectionsRoutes = require('./routes/admin-elections');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -101,6 +105,10 @@ app.get('/health', async (req, res) => {
 // API routes
 app.use('/api/auth', authRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/elections', electionsRoutes);
+app.use('/api/vote', voteRoutes);
+app.use('/api/admin/blockchain', blockchainAdminRoutes);
+app.use('/api/admin', adminElectionsRoutes);
 
 // API documentation endpoint
 app.get('/api', (req, res) => {

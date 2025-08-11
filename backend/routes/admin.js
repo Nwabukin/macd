@@ -32,8 +32,7 @@ const upload = multer({
 });
 
 // Apply authentication middleware to all admin routes
-router.use(authenticate);
-router.use(requireAdmin);
+router.use(authenticate, requireAdmin);
 
 /**
  * @route   GET /api/admin/dashboard

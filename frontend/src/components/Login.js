@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../api/client';
 import {
   Container,
   Paper,
@@ -29,10 +30,31 @@ const Login = () => {
     setLoading(true);
     setError('');
     
-    // TODO: Implement login logic in later tasks
-    console.log('Login attempt:', credentials);
+    try {
+      // Try admin login first if it looks like an email
+      if (credentials.username.includes('@')) {
+        const { data } = await api.post('/auth/admin/login', {
+          email: credentials.username,
+          password: credentials.password,
+        });
+        localStorage.setItem('auth_token', data.token);
+        window.location.href = '/admin';
+        return;
+      }
+      // Otherwise voter login
+      const { data } = await api.post('/auth/voter/login', {
+        matricNumber: credentials.username,
+        password: credentials.password,
+      });
+      localStorage.setItem('auth_token', data.token);
+      window.location.href = '/voter';
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Login failed';
+      setError(msg);
+    } finally {
+      setLoading(false);
+    }
     
-    setLoading(false);
   };
 
   return (
